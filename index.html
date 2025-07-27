@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="一个简洁高效的Web端命令管理工具，专为开发者和系统管理员设计">
+    <meta name="keywords" content="命令管理,开发工具,SSH,Git,Docker,终端命令">
+    <meta name="author" content="陈澄 (Stephen Chan)">
+    
+    <!-- 网站图标 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+    
+    <title>命令管理工具 - Command Manager</title>
+    <link rel="stylesheet" href="command.css">
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 头部标题 -->
+        <header class="header">
+            <h1>命令管理工具</h1>
+            <p class="subtitle">高效管理和复制常用命令</p>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 命令输入区域 -->
+            <div class="input-section">
+                <div class="input-card">
+                    <div class="input-header">
+                        <div class="input-icon">💻</div>
+                        <h3>添加新命令</h3>
+                    </div>
+                    <div class="input-group">
+                        <div class="command-inputs">
+                            <input type="text" class="command-name-input" id="commandNameInput" 
+                                   placeholder="命令名称（可选），如：生产环境SSH登录">
+                            <input type="text" class="command-input" id="commandInput" 
+                                   placeholder="输入命令，如：ssh user@server.com 或 git clone repo-url">
+                        </div>
+                        <button class="btn btn-primary" id="addCommandBtn">
+                            <span class="btn-text">添加命令</span>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        <small>💡 支持所有类型的命令：ssh、git、docker、npm、curl 等</small>
+                        <small>🏷️ 可为命令添加自定义名称，便于快速识别用途</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 命令列表区域 -->
+            <div class="commands-section">
+                <div class="section-header">
+                    <h3>命令列表</h3>
+                    <div class="commands-count">
+                        <span class="count-number" id="commandsCount">0</span>
+                        <span class="count-label">条命令</span>
+                    </div>
+                </div>
+                
+                <!-- 空状态 -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">📝</div>
+                    <h4>还没有添加命令</h4>
+                    <p>在上方输入框中添加你的第一条命令吧！</p>
+                </div>
+
+                <!-- 命令卡片容器 -->
+                <div class="commands-list" id="commandsList">
+                    <!-- 命令卡片将通过 JavaScript 动态生成 -->
+                </div>
+            </div>
+
+            <!-- 快捷操作区域 -->
+            <div class="actions-section">
+                <div class="actions-card">
+                    <h4>快捷操作</h4>
+                    <div class="action-buttons">
+                        <button class="btn btn-danger btn-icon" id="resetBtn">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-text">重置数据</span>
+                        </button>
+                        <button class="btn btn-info btn-icon" id="exportBtn">
+                            <span class="btn-icon">📤</span>
+                            <span class="btn-text">导出命令</span>
+                        </button>
+                        <button class="btn btn-success btn-icon" id="importBtn">
+                            <span class="btn-icon">📥</span>
+                            <span class="btn-text">导入命令</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部工具栏 -->
+        <footer class="footer">
+            <button class="tool-btn" id="themeBtn" title="切换主题">
+                <span class="tool-icon">🌙</span>
+            </button>
+            <button class="tool-btn" id="helpBtn" title="使用帮助">
+                <span class="tool-icon">❓</span>
+            </button>
+            <a href="https://github.com/isabellakiko/command-manager" class="tool-btn" title="GitHub仓库" target="_blank">
+                <span class="tool-icon">🐙</span>
+            </a>
+        </footer>
+
+        <!-- 通知弹窗 -->
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <span class="notification-text"></span>
+            </div>
+        </div>
+
+        <!-- 帮助弹窗 -->
+        <div class="help-modal" id="helpModal">
+            <div class="help-content">
+                <div class="help-header">
+                    <h3>使用说明</h3>
+                    <button class="close-btn" id="closeHelpBtn">×</button>
+                </div>
+                <div class="help-body">
+                    <div class="help-section">
+                        <h4>📝 添加命令</h4>
+                        <p>在输入框中输入任何命令，点击"添加命令"按钮即可保存。</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>📋 复制命令</h4>
+                        <p>点击任意命令卡片的"复制"按钮，命令将自动复制到剪贴板。</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>🗑️ 删除命令</h4>
+                        <p>点击命令卡片的删除按钮可以移除单条命令。</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>💾 数据保存</h4>
+                        <p>所有命令都会自动保存在本地，刷新页面不会丢失。</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>⌨️ 快捷键</h4>
+                        <p>• Enter：添加命令<br>• Ctrl+A：全选输入框内容</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 隐藏的文件输入框 -->
+        <input type="file" id="fileInput" accept=".json" style="display: none;">
+    </div>
+
+    <script src="command.js"></script>
+</body>
+</html>
