@@ -113,8 +113,8 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 ## 👨‍💻 作者
 
 **陈澄 (Stephen Chan)**
-- GitHub: [@你的GitHub用户名](https://github.com/你的GitHub用户名)
-- Email: your-email@example.com
+- GitHub: [@isabellakiko](https://github.com/isabellakiko/command-manager)
+- Email: kaylonchan@gmail.com
 
 ---
 
