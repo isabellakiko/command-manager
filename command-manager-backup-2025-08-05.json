@@ -1,0 +1,150 @@
+{
+  "version": "3.0.0",
+  "exportTime": "2025-08-05T11:33:03.715Z",
+  "folders": [
+    {
+      "id": "default",
+      "name": "全部命令",
+      "isDefault": true
+    },
+    {
+      "id": "folder_1754393262734",
+      "name": "AI",
+      "isDefault": false
+    },
+    {
+      "id": "folder_1754393346218",
+      "name": "FFmpeg",
+      "isDefault": false
+    },
+    {
+      "id": "folder_1754393370348",
+      "name": "服务器命令",
+      "isDefault": false
+    },
+    {
+      "id": "folder_1754393443850",
+      "name": "影音资源下载",
+      "isDefault": false
+    }
+  ],
+  "commands": [
+    {
+      "id": "cmd_1754393296015_frwiedkol",
+      "name": "CLAUDE.md",
+      "command": "将所有详细做过的每一步更新到CLAUDE.md，便于 其他人/AI 查看、快速了解",
+      "folderId": "folder_1754393262734",
+      "createdAt": "2025-08-05T11:28:16.015Z",
+      "updatedAt": "2025-08-05T11:28:16.015Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393313328_dx5wemn0i",
+      "name": "终端临时代理",
+      "command": "export http_proxy=http://127.0.0.1:7890 export https_proxy=http://127.0.0.1:7890 export HTTP_PROXY=http://127.0.0.1:7890 export HTTPS_PROXY=http://127.0.0.1:7890",
+      "folderId": "folder_1754393262734",
+      "createdAt": "2025-08-05T11:28:33.328Z",
+      "updatedAt": "2025-08-05T11:28:46.330Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393359202_pxg2dm997",
+      "name": "提取音频，识别文字",
+      "command": "ffmpeg -i '/Users/stephen/Library/Mobile Documents/com~apple~CloudDocs/就业/永麦/创耕/易达BIM造价插件/会议/1.mov' -vn -acodec copy '/Users/stephen/Library/Mobile Documents/com~apple~CloudDocs/就业/永麦/创耕/易达BIM造价插件/会议/1.m4a'",
+      "folderId": "folder_1754393346218",
+      "createdAt": "2025-08-05T11:29:19.202Z",
+      "updatedAt": "2025-08-05T11:29:19.202Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393388365_zajstocw2",
+      "name": "阿里云备用服务器",
+      "command": "ssh -i /Users/stephen/stephen/id_rsa root@106.15.94.251",
+      "folderId": "folder_1754393370348",
+      "createdAt": "2025-08-05T11:29:48.365Z",
+      "updatedAt": "2025-08-05T11:29:48.365Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393404195_6lp74y5i1",
+      "name": "上传前端所有项目",
+      "command": "scp -i /Users/stephen/stephen/id_rsa -r '/Users/stephen/Library/Mobile Documents/com~apple~CloudDocs/CS/Font_End/web/kaylonchan_yaolifeng/'* root@106.14.163.190:/var/www/stephen-site/",
+      "folderId": "folder_1754393370348",
+      "createdAt": "2025-08-05T11:30:04.195Z",
+      "updatedAt": "2025-08-05T11:30:04.195Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393417254_v853sq0ob",
+      "name": "上传前端特定文件",
+      "command": "scp -i /Users/stephen/stephen/id_rsa -r '/Users/stephen/Library/Mobile Documents/com~apple~CloudDocs/CS/Font_End/web/kaylonchan_yaolifeng/stock-dashboard/'* root@106.14.163.190:/var/www/stephen-site/stock-dashboard/",
+      "folderId": "folder_1754393370348",
+      "createdAt": "2025-08-05T11:30:17.254Z",
+      "updatedAt": "2025-08-05T11:30:17.254Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393459235_seivp4284",
+      "name": "下载 Youtube 视频",
+      "command": "yt-dlp -f \"140+401\" -o '/Users/stephen/Downloads/Downie/Youtube/精美视频/%(title)s' \"https://youtu.be/z4ae8XIkIPE?si=ablCUj3Z1zKK58BP\"",
+      "folderId": "folder_1754393443850",
+      "createdAt": "2025-08-05T11:30:59.235Z",
+      "updatedAt": "2025-08-05T11:30:59.235Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393475553_o5ds5couh",
+      "name": "下载单一视频 / 音频",
+      "command": "yt-dlp -f 140 -o \"%(title)s.%(ext)s\"",
+      "folderId": "folder_1754393443850",
+      "createdAt": "2025-08-05T11:31:15.553Z",
+      "updatedAt": "2025-08-05T11:31:15.553Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393488950_nzlbw7ee8",
+      "name": "查看可下载项",
+      "command": "yt-dlp -F",
+      "folderId": "folder_1754393443850",
+      "createdAt": "2025-08-05T11:31:28.950Z",
+      "updatedAt": "2025-08-05T11:31:28.951Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393511637_t3oplfm9y",
+      "name": "Whisper 识别音频输出（small）",
+      "command": "whisper '观看视频教程.wav' --model small --language Chinese --output_format txt",
+      "folderId": "folder_1754393262734",
+      "createdAt": "2025-08-05T11:31:51.637Z",
+      "updatedAt": "2025-08-05T11:31:51.637Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393523288_ggyydjab1",
+      "name": "提取音频重命名",
+      "command": "ffmpeg -i 20250804.mov -vn -acodec pcm_s16le 20250814.wav",
+      "folderId": "folder_1754393346218",
+      "createdAt": "2025-08-05T11:32:03.288Z",
+      "updatedAt": "2025-08-05T11:32:03.288Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393531440_in9xo7pel",
+      "name": "data_crawler/all_cookies",
+      "command": "data_crawler/all_cookies",
+      "folderId": "folder_1754393346218",
+      "createdAt": "2025-08-05T11:32:11.440Z",
+      "updatedAt": "2025-08-05T11:32:11.440Z",
+      "useCount": 0
+    },
+    {
+      "id": "cmd_1754393551856_t8syk9fej",
+      "name": "进入主服务器",
+      "command": "ssh -i /Users/stephen/stephen/id_rsa root@106.14.163.190",
+      "folderId": "folder_1754393370348",
+      "createdAt": "2025-08-05T11:32:31.856Z",
+      "updatedAt": "2025-08-05T11:32:31.856Z",
+      "useCount": 0
+    }
+  ]
+}

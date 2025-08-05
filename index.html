@@ -16,79 +16,122 @@
 <body>
     <!-- 主容器 -->
     <div class="container">
-        <!-- 头部标题 -->
+        <!-- 头部标题和搜索 -->
         <header class="header">
-            <h1>命令管理工具</h1>
-            <p class="subtitle">高效管理和复制常用命令</p>
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>命令管理工具</h1>
+                    <p class="subtitle">高效管理和复制常用命令</p>
+                </div>
+                <div class="header-search">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索命令...">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
         </header>
 
         <!-- 主要内容区域 -->
         <main class="main-content">
-            <!-- 命令输入区域 -->
-            <div class="input-section">
-                <div class="input-card">
-                    <div class="input-header">
-                        <div class="input-icon">💻</div>
-                        <h3>添加新命令</h3>
+            <!-- 左侧侧边栏 -->
+            <aside class="sidebar">
+                <!-- 文件夹管理区域 -->
+                <div class="folder-section">
+                    <div class="folder-header">
+                        <h3>文件夹</h3>
+                        <button class="btn-icon-sm" id="newFolderBtn" title="新建文件夹">
+                            <span>➕</span>
+                        </button>
                     </div>
-                    <div class="input-group">
-                        <div class="command-inputs">
-                            <input type="text" class="command-name-input" id="commandNameInput" 
-                                   placeholder="命令名称（可选），如：生产环境SSH登录">
-                            <input type="text" class="command-input" id="commandInput" 
-                                   placeholder="输入命令，如：ssh user@server.com 或 git clone repo-url">
+                    <div class="folder-list" id="folderList">
+                        <!-- 默认文件夹 -->
+                        <div class="folder-item active" data-folder-id="default">
+                            <span class="folder-icon">📁</span>
+                            <span class="folder-name">全部命令</span>
+                            <span class="folder-count">0</span>
                         </div>
-                        <button class="btn btn-primary" id="addCommandBtn">
-                            <span class="btn-text">添加命令</span>
-                        </button>
-                    </div>
-                    <div class="input-hint">
-                        <small>💡 支持所有类型的命令：ssh、git、docker、npm、curl 等</small>
-                        <small>🏷️ 可为命令添加自定义名称，便于快速识别用途</small>
+                        <!-- 动态生成的文件夹将插入这里 -->
                     </div>
                 </div>
-            </div>
 
-            <!-- 命令列表区域 -->
-            <div class="commands-section">
-                <div class="section-header">
-                    <h3>命令列表</h3>
-                    <div class="commands-count">
-                        <span class="count-number" id="commandsCount">0</span>
-                        <span class="count-label">条命令</span>
-                    </div>
-                </div>
-                
-                <!-- 空状态 -->
-                <div class="empty-state" id="emptyState">
-                    <div class="empty-icon">📝</div>
-                    <h4>还没有添加命令</h4>
-                    <p>在上方输入框中添加你的第一条命令吧！</p>
-                </div>
-
-                <!-- 命令卡片容器 -->
-                <div class="commands-list" id="commandsList">
-                    <!-- 命令卡片将通过 JavaScript 动态生成 -->
-                </div>
-            </div>
-
-            <!-- 快捷操作区域 -->
-            <div class="actions-section">
-                <div class="actions-card">
-                    <h4>快捷操作</h4>
+                <!-- 快捷操作区域 -->
+                <div class="actions-section">
                     <div class="action-buttons">
-                        <button class="btn btn-danger btn-icon" id="resetBtn">
-                            <span class="btn-icon">🔄</span>
-                            <span class="btn-text">重置数据</span>
+                        <button class="btn btn-sm btn-danger" id="resetBtn">
+                            <span>🔄</span>
+                            <span>重置数据</span>
                         </button>
-                        <button class="btn btn-info btn-icon" id="exportBtn">
-                            <span class="btn-icon">📤</span>
-                            <span class="btn-text">导出命令</span>
+                        <button class="btn btn-sm btn-info" id="exportBtn">
+                            <span>📤</span>
+                            <span>导出</span>
                         </button>
-                        <button class="btn btn-success btn-icon" id="importBtn">
-                            <span class="btn-icon">📥</span>
-                            <span class="btn-text">导入命令</span>
+                        <button class="btn btn-sm btn-success" id="importBtn">
+                            <span>📥</span>
+                            <span>导入</span>
                         </button>
+                    </div>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">总命令数</span>
+                        <span class="stat-value" id="totalCommands">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">文件夹数</span>
+                        <span class="stat-value" id="totalFolders">0</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 中间内容区域 -->
+            <div class="content-area">
+                <!-- 命令输入区域 -->
+                <div class="input-section">
+                    <div class="input-card">
+                        <div class="input-header">
+                            <h3>添加新命令</h3>
+                            <select class="folder-select" id="folderSelect">
+                                <option value="default">全部命令</option>
+                                <!-- 动态生成的文件夹选项 -->
+                            </select>
+                        </div>
+                        <div class="input-fields">
+                            <input type="text" class="command-name-input" id="commandNameInput" 
+                                   placeholder="命令名称（可选）">
+                            <textarea class="command-textarea" id="commandInput" 
+                                      placeholder="输入命令，支持多行..." rows="3"></textarea>
+                            <button class="btn btn-primary btn-block" id="addCommandBtn">
+                                添加命令
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 命令列表区域 -->
+                <div class="commands-section">
+                    <div class="section-header">
+                        <h3 id="currentFolderName">全部命令</h3>
+                        <div class="view-options">
+                            <button class="view-btn active" data-view="grid" title="网格视图">
+                                <span>⊞</span>
+                            </button>
+                            <button class="view-btn" data-view="list" title="列表视图">
+                                <span>☰</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 空状态 -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">📝</div>
+                        <h4>还没有添加命令</h4>
+                        <p>在上方输入框中添加你的第一条命令吧！</p>
+                    </div>
+
+                    <!-- 命令容器 -->
+                    <div class="commands-container grid-view" id="commandsList">
+                        <!-- 命令卡片将通过 JavaScript 动态生成 -->
                     </div>
                 </div>
             </div>
@@ -123,24 +166,32 @@
                 </div>
                 <div class="help-body">
                     <div class="help-section">
+                        <h4>📁 文件夹管理</h4>
+                        <p>• 点击"➕"按钮新建文件夹<br>• 鼠标悬停文件夹显示重命名/删除按钮<br>• 拖拽命令到文件夹进行分类</p>
+                    </div>
+                    <div class="help-section">
                         <h4>📝 添加命令</h4>
-                        <p>在输入框中输入任何命令，点击"添加命令"按钮即可保存。</p>
+                        <p>• 支持多行命令输入<br>• 可选择目标文件夹<br>• 自动生成命令名称</p>
                     </div>
                     <div class="help-section">
-                        <h4>📋 复制命令</h4>
-                        <p>点击任意命令卡片的"复制"按钮，命令将自动复制到剪贴板。</p>
+                        <h4>✏️ 编辑命令</h4>
+                        <p>• 点击"编辑"按钮进入编辑模式<br>• 支持多行文本编辑<br>• Ctrl+Enter 保存，Escape 取消</p>
                     </div>
                     <div class="help-section">
-                        <h4>🗑️ 删除命令</h4>
-                        <p>点击命令卡片的删除按钮可以移除单条命令。</p>
+                        <h4>🔍 搜索功能</h4>
+                        <p>• 顶部搜索框支持实时搜索<br>• 搜索命令名称和内容<br>• Ctrl+K 快速聚焦搜索框</p>
                     </div>
                     <div class="help-section">
-                        <h4>💾 数据保存</h4>
-                        <p>所有命令都会自动保存在本地，刷新页面不会丢失。</p>
+                        <h4>📋 复制与管理</h4>
+                        <p>• 点击"复制"按钮复制命令到剪贴板<br>• 自动记录使用次数<br>• 拖拽卡片调整顺序</p>
                     </div>
                     <div class="help-section">
                         <h4>⌨️ 快捷键</h4>
-                        <p>• Enter：添加命令<br>• Ctrl+A：全选输入框内容</p>
+                        <p>• Ctrl+K：快速搜索<br>• Ctrl+N：新建命令<br>• Ctrl+Shift+N：新建文件夹<br>• Ctrl+Enter：添加/保存命令</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>💾 数据管理</h4>
+                        <p>• 数据自动保存到本地存储<br>• 支持导入/导出JSON文件<br>• 重置功能清空所有数据</p>
                     </div>
                 </div>
             </div>
