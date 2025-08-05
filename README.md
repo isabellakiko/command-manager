@@ -31,7 +31,7 @@
 ### 本地部署
 ```bash
 # 克隆仓库
-git clone https://github.com/你的用户名/command-manager.git
+git clone https://github.com/isabellakiko/command-manager
 
 # 进入目录
 cd command-manager
