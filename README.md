@@ -206,7 +206,7 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 **陈澄 (Stephen Chan)**  
 🌐 个人网站: [kaylonchan.com](https://kaylonchan.com)  
-📧 Email: stephen@kaylonchan.com
+📧 Email: kaylonchan@gmail.com
 
 ---
 
