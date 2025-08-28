@@ -1,17 +1,29 @@
 /**
- * 命令管理工具 - 增强版主要逻辑类
+ * 命令管理工具 - Apple Glass Morphism Edition
  * 
- * 新增功能特性：
+ * 🎯 核心功能特性：
  * - 文件夹分类系统
- * - 多行命令编辑支持
+ * - 多行命令编辑支持  
  * - 搜索和筛选功能
  * - 网格/列表视图切换
  * - 拖拽排序和文件夹间移动
- * - 现代化UI设计
+ * 
+ * 🍎 Apple级视觉特性：
+ * - 毛玻璃效果 (backdrop-filter)
+ * - 鼠标跟随动态背景
+ * - 苹果标准色彩系统
+ * - 流畅的动画过渡
+ * - 现代化交互反馈
+ * 
+ * 🔧 技术改进：
+ * - 修复编辑保存bug
+ * - 增强错误处理
+ * - 优化用户体验
+ * - 完善视觉反馈
  * 
  * @class CommandManager
  * @author 陈澄 (Stephen Chan)
- * @version 3.0.0
+ * @version 4.0.0 - Glass Morphism Edition
  * @since 1.0.0
  */
 class CommandManager {
@@ -35,6 +47,7 @@ class CommandManager {
         this.loadData();
         this.bindEvents();
         this.initTheme();
+        this.setupMouseFollowEffect();
         this.updateDisplay();
     }
 
@@ -156,19 +169,36 @@ class CommandManager {
         let draggedCommandId = null;
 
         this.elements.commandsList.addEventListener('dragstart', (e) => {
-            if (e.target.classList.contains('command-card')) {
-                draggedElement = e.target;
-                draggedCommandId = e.target.dataset.commandId;
-                e.target.classList.add('dragging');
+            // 查找最近的命令卡片元素（支持从子元素触发拖拽）
+            const commandCard = e.target.closest('.command-card');
+            
+            // 只有当找到命令卡片且不在编辑模式时才允许拖拽
+            if (commandCard && !commandCard.classList.contains('editing')) {
+                draggedElement = commandCard;
+                draggedCommandId = commandCard.dataset.commandId;
+                commandCard.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
+                
+                // 设置拖拽数据
+                e.dataTransfer.setData('text/plain', '');
+                
+                console.log('开始拖拽命令卡片:', draggedCommandId);
+            } else {
+                // 阻止不符合条件的拖拽
+                e.preventDefault();
             }
         });
 
         this.elements.commandsList.addEventListener('dragend', (e) => {
-            if (e.target.classList.contains('command-card')) {
-                e.target.classList.remove('dragging');
+            // 查找最近的命令卡片元素
+            const commandCard = e.target.closest('.command-card');
+            
+            if (commandCard) {
+                commandCard.classList.remove('dragging');
                 draggedElement = null;
                 draggedCommandId = null;
+                
+                console.log('结束拖拽命令卡片');
             }
         });
 
@@ -297,7 +327,7 @@ class CommandManager {
      * 生成唯一ID
      */
     generateId() {
-        return 'cmd_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        return 'cmd_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
     }
 
     /**
@@ -372,32 +402,38 @@ class CommandManager {
             command.useCount++;
             command.updatedAt = new Date().toISOString();
             this.saveData();
-            this.updateCommandCard(commandId);
 
-            // 更新按钮状态
-            const copyBtn = document.querySelector(`[data-command-id="${commandId}"] .btn-copy`);
-            if (copyBtn) {
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<span>✓</span><span>已复制</span>';
-                copyBtn.classList.add('copied');
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('copied');
-                }, 2000);
+            // 更新按钮状态 - 使用更稳定的方式获取按钮
+            const card = document.querySelector(`[data-command-id="${commandId}"]`);
+            if (card) {
+                const copyBtn = card.querySelector('.btn-copy');
+                if (copyBtn) {
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<span>✓</span><span>已复制</span>';
+                    copyBtn.classList.add('copied');
+                    copyBtn.disabled = true; // 防止重复点击
+                    
+                    setTimeout(() => {
+                        if (copyBtn) { // 确保按钮还存在
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.classList.remove('copied');
+                            copyBtn.disabled = false;
+                        }
+                    }, 2000);
+                }
             }
 
             this.showNotification('命令已复制到剪贴板', 'success');
         } catch (error) {
             console.error('Copy failed:', error);
-            this.fallbackCopy(command.command);
+            this.fallbackCopy(command.command, commandId);
         }
     }
 
     /**
      * 降级复制方案
      */
-    fallbackCopy(text) {
+    fallbackCopy(text, commandId = null) {
         const textArea = document.createElement('textarea');
         textArea.value = text;
         textArea.style.position = 'fixed';
@@ -409,6 +445,36 @@ class CommandManager {
 
         try {
             document.execCommand('copy');
+            
+            // 如果有commandId，更新使用次数和按钮状态
+            if (commandId) {
+                const command = this.commands.find(cmd => cmd.id === commandId);
+                if (command) {
+                    command.useCount++;
+                    command.updatedAt = new Date().toISOString();
+                    this.saveData();
+                }
+
+                const card = document.querySelector(`[data-command-id="${commandId}"]`);
+                if (card) {
+                    const copyBtn = card.querySelector('.btn-copy');
+                    if (copyBtn) {
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<span>✓</span><span>已复制</span>';
+                        copyBtn.classList.add('copied');
+                        copyBtn.disabled = true;
+                        
+                        setTimeout(() => {
+                            if (copyBtn) {
+                                copyBtn.innerHTML = originalText;
+                                copyBtn.classList.remove('copied');
+                                copyBtn.disabled = false;
+                            }
+                        }, 2000);
+                    }
+                }
+            }
+            
             this.showNotification('命令已复制到剪贴板', 'success');
         } catch (err) {
             console.error('Fallback copy failed:', err);
@@ -428,11 +494,19 @@ class CommandManager {
         const card = document.querySelector(`[data-command-id="${commandId}"]`);
         if (!card) return;
 
+        // 编辑模式时，禁用拖拽
+        const originalDraggable = card.getAttribute('draggable');
+        card.setAttribute('draggable', 'false');
+        card.classList.add('editing');
+
         // 获取元素
         const nameElement = card.querySelector('.command-name');
         const contentElement = card.querySelector('.command-content');
         const actionsElement = card.querySelector('.command-actions');
 
+        // 获取原始内容区域的高度
+        const originalContentHeight = contentElement.offsetHeight;
+        
         // 创建编辑界面
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
@@ -443,6 +517,10 @@ class CommandManager {
         contentTextarea.value = command.command;
         contentTextarea.className = 'command-edit-textarea';
         contentTextarea.rows = Math.min(command.command.split('\n').length + 1, 10);
+        // 设置固定高度避免跳跃，但保留最小高度
+        contentTextarea.style.height = Math.max(originalContentHeight, 120) + 'px';
+        contentTextarea.style.minHeight = '120px';
+        contentTextarea.style.resize = 'vertical';
 
         const saveBtn = document.createElement('button');
         saveBtn.className = 'command-btn btn-save';
@@ -470,23 +548,89 @@ class CommandManager {
         contentTextarea.focus();
         contentTextarea.setSelectionRange(contentTextarea.value.length, contentTextarea.value.length);
 
-        // 保存函数
-        const saveEdit = () => {
+        // 保存函数 - 修复版，确保保存状态正确显示
+        const saveEdit = async () => {
             const newName = nameInput.value.trim();
             const newCommand = contentTextarea.value.trim();
 
             if (!newCommand) {
                 this.showNotification('命令内容不能为空', 'warning');
+                contentTextarea.focus();
                 return;
             }
 
-            command.name = newName || this.generateCommandName(newCommand);
-            command.command = newCommand;
-            command.updatedAt = new Date().toISOString();
-            
-            this.saveData();
-            this.updateCommandCard(commandId);
-            this.showNotification('命令已更新', 'success');
+            try {
+                // 1. 显示保存中状态
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span>⏳</span><span>保存中...</span>';
+                saveBtn.classList.add('loading');
+                
+                // 2. 添加保存动画效果
+                card.style.transform = 'scale(0.98)';
+                card.style.filter = 'brightness(1.1)';
+                
+                // 3. 更新数据
+                const oldName = command.name;
+                const oldCommand = command.command;
+                
+                command.name = newName || this.generateCommandName(newCommand);
+                command.command = newCommand;
+                command.updatedAt = new Date().toISOString();
+                
+                // 4. 保存到本地存储
+                this.saveData();
+                
+                // 5. 显示保存成功状态（在更新界面前）
+                saveBtn.innerHTML = '<span>✅</span><span>保存成功</span>';
+                saveBtn.classList.remove('loading');
+                saveBtn.classList.add('success');
+                
+                // 6. 延迟后恢复界面
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        // 恢复卡片视觉状态
+                        card.style.transform = '';
+                        card.style.filter = '';
+                        
+                        // 先恢复界面状态
+                        card.setAttribute('draggable', originalDraggable);
+                        card.classList.remove('editing');
+                        cleanup();
+                        
+                        // 更新卡片内容
+                        this.updateCommandCard(commandId);
+                        
+                        // 显示成功通知
+                        this.showNotification(`命令"${command.name}"已更新`, 'success');
+                        
+                        // 记录更新操作
+                        console.log('Command updated:', {
+                            id: commandId,
+                            oldName,
+                            newName: command.name,
+                            oldCommand: oldCommand.substring(0, 50) + '...',
+                            newCommand: command.command.substring(0, 50) + '...'
+                        });
+                        
+                        resolve();
+                    }, 800); // 增加延迟时间让用户看到保存成功状态
+                });
+                
+            } catch (error) {
+                console.error('Save error:', error);
+                
+                // 恢复保存按钮状态
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<span>💾</span><span>保存</span>';
+                saveBtn.classList.remove('loading');
+                
+                // 显示错误通知
+                this.showNotification('保存失败，请重试', 'error');
+                
+                // 恢复卡片状态
+                card.style.transform = '';
+                card.style.filter = '';
+            }
         };
 
         // 取消函数
@@ -494,33 +638,86 @@ class CommandManager {
             nameElement.innerHTML = originalName;
             contentElement.innerHTML = originalContent;
             actionsElement.innerHTML = originalActions;
+            
+            // 恢复拖拽功能
+            card.setAttribute('draggable', originalDraggable);
+            card.classList.remove('editing');
+            
+            // 清理事件监听器
+            cleanup();
         };
 
-        // 绑定事件
-        saveBtn.addEventListener('click', saveEdit);
-        cancelBtn.addEventListener('click', cancelEdit);
-        contentTextarea.addEventListener('keydown', (e) => {
+        // 键盘事件处理函数
+        const handleKeydown = (e) => {
             if (e.key === 'Escape') {
                 cancelEdit();
             } else if (e.key === 'Enter' && e.ctrlKey) {
                 saveEdit();
             }
-        });
+        };
+
+        // 清理函数
+        const cleanup = () => {
+            saveBtn.removeEventListener('click', saveEdit);
+            cancelBtn.removeEventListener('click', cancelEdit);
+            contentTextarea.removeEventListener('keydown', handleKeydown);
+        };
+
+        // 绑定事件
+        saveBtn.addEventListener('click', saveEdit);
+        cancelBtn.addEventListener('click', cancelEdit);
+        contentTextarea.addEventListener('keydown', handleKeydown);
     }
 
     /**
-     * 更新单个命令卡片
+     * 更新单个命令卡片 - 增强版，提供更好的视觉反馈
      */
     updateCommandCard(commandId) {
         const command = this.commands.find(cmd => cmd.id === commandId);
-        if (!command) return;
+        if (!command) {
+            console.warn('Command not found:', commandId);
+            return;
+        }
 
         const card = document.querySelector(`[data-command-id="${commandId}"]`);
-        if (!card) return;
+        if (!card) {
+            console.warn('Card element not found:', commandId);
+            return;
+        }
 
-        // 重新生成卡片
-        const newCard = this.createCommandCard(command);
-        card.parentNode.replaceChild(newCard, card);
+        try {
+            // 添加更新动画效果
+            card.style.transform = 'scale(0.98)';
+            card.style.opacity = '0.7';
+            card.style.transition = 'all 0.2s ease';
+
+            // 短暂延迟后更新内容，提供视觉反馈
+            setTimeout(() => {
+                // 重新生成卡片
+                const newCard = this.createCommandCard(command);
+                
+                // 添加进入动画
+                newCard.style.transform = 'scale(0.98)';
+                newCard.style.opacity = '0.7';
+                newCard.style.transition = 'all 0.2s ease';
+                
+                // 替换卡片
+                card.parentNode.replaceChild(newCard, card);
+                
+                // 恢复正常状态
+                requestAnimationFrame(() => {
+                    newCard.style.transform = '';
+                    newCard.style.opacity = '';
+                });
+                
+                console.log('Command card updated successfully:', commandId);
+            }, 100);
+            
+        } catch (error) {
+            console.error('Error updating command card:', error);
+            // 降级处理：直接重新渲染所有命令
+            this.updateDisplay();
+        }
     }
 
     /**
@@ -732,11 +929,19 @@ class CommandManager {
      * 处理命令操作
      */
     handleCommandAction(event) {
-        const commandCard = event.target.closest('.command-card');
+        // 查找最近的带有 data-action 的按钮
+        const actionButton = event.target.closest('[data-action]');
+        if (!actionButton) return;
+
+        // 查找对应的命令卡片
+        const commandCard = actionButton.closest('.command-card');
         if (!commandCard) return;
 
         const commandId = commandCard.dataset.commandId;
-        const action = event.target.dataset.action;
+        const action = actionButton.dataset.action;
+
+        // 阻止事件冒泡，避免触发拖拽
+        event.stopPropagation();
 
         switch (action) {
             case 'copy':
@@ -1003,6 +1208,68 @@ class CommandManager {
     }
 
     /**
+     * 设置鼠标跟随效果 - Apple Glass Morphism 动态背景
+     */
+    setupMouseFollowEffect() {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            
+            // 更新CSS自定义属性
+            document.documentElement.style.setProperty('--mouse-x', x + '%');
+            document.documentElement.style.setProperty('--mouse-y', y + '%');
+            document.documentElement.style.setProperty('--mouse-active', '1');
+        });
+
+        // 鼠标离开时逐渐淡出效果
+        document.addEventListener('mouseleave', () => {
+            document.documentElement.style.setProperty('--mouse-active', '0');
+        });
+
+        // 鼠标进入时激活效果
+        document.addEventListener('mouseenter', () => {
+            document.documentElement.style.setProperty('--mouse-active', '1');
+        });
+
+        // 为主要交互元素添加增强的毛玻璃效果
+        this.enhanceGlassElements();
+    }
+
+    /**
+     * 增强毛玻璃元素的交互效果
+     */
+    enhanceGlassElements() {
+        // 为需要增强效果的元素添加glass-morphism类
+        const elementsToEnhance = [
+            '.header',
+            '.sidebar', 
+            '.input-section',
+            '.commands-section',
+            '.footer'
+        ];
+
+        elementsToEnhance.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+                element.classList.add('glass-morphism');
+                
+                // 添加特殊悬停效果
+                element.addEventListener('mouseenter', () => {
+                    element.style.transform = 'translateY(-1px)';
+                    element.style.backdropFilter = 'blur(25px) saturate(200%)';
+                    element.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.4)';
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    element.style.transform = '';
+                    element.style.backdropFilter = '';
+                    element.style.boxShadow = '';
+                });
+            });
+        });
+    }
+
+    /**
      * 导出命令
      */
     exportCommands() {
@@ -1070,6 +1337,7 @@ class CommandManager {
     mergeImportedData(data) {
         let importedFolders = 0;
         let importedCommands = 0;
+        let skippedCommands = 0;
 
         // 导入文件夹
         data.folders.forEach(folder => {
@@ -1078,7 +1346,7 @@ class CommandManager {
             if (!this.folders.find(f => f.name === folder.name)) {
                 this.folders.push({
                     ...folder,
-                    id: 'folder_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+                    id: 'folder_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11)
                 });
                 importedFolders++;
             }
@@ -1093,21 +1361,36 @@ class CommandManager {
             }
         });
 
-        // 导入命令
+        // 导入命令 - 添加去重逻辑
         data.commands.forEach(command => {
-            const newCommand = {
-                ...command,
-                id: this.generateId(),
-                folderId: folderIdMap[command.folderId] || 'default'
-            };
+            // 检查是否已存在相同的命令（按名称和命令内容）
+            const isDuplicate = this.commands.some(existingCmd => 
+                existingCmd.name.trim().toLowerCase() === command.name.trim().toLowerCase() &&
+                existingCmd.command.trim() === command.command.trim()
+            );
             
-            this.commands.push(newCommand);
-            importedCommands++;
+            if (!isDuplicate) {
+                const newCommand = {
+                    ...command,
+                    id: this.generateId(),
+                    folderId: folderIdMap[command.folderId] || 'default'
+                };
+                
+                this.commands.push(newCommand);
+                importedCommands++;
+            } else {
+                skippedCommands++;
+            }
         });
 
         this.saveData();
         this.updateDisplay();
-        this.showNotification(`导入成功：${importedFolders} 个文件夹，${importedCommands} 条命令`, 'success');
+        
+        let message = `导入成功：${importedFolders} 个文件夹，${importedCommands} 条命令`;
+        if (skippedCommands > 0) {
+            message += `，跳过 ${skippedCommands} 条重复命令`;
+        }
+        this.showNotification(message, 'success');
     }
 
     /**

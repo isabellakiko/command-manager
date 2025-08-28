@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="一个简洁高效的Web端命令管理工具，专为开发者和系统管理员设计">
-    <meta name="keywords" content="命令管理,开发工具,SSH,Git,Docker,终端命令">
+    <meta name="description" content="Apple Glass Morphism风格的Web端命令管理工具，专为开发者和系统管理员设计。支持毛玻璃效果、鼠标跟随动态背景等现代化交互体验">
+    <meta name="keywords" content="命令管理,开发工具,SSH,Git,Docker,终端命令,毛玻璃效果,Apple设计,Glass Morphism">
     <meta name="author" content="陈澄 (Stephen Chan)">
+    <meta name="version" content="4.0.0 - Glass Morphism Edition">
+    
+    <!-- 缓存控制 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- 网站图标 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
     
-    <title>命令管理工具 - Command Manager</title>
-    <link rel="stylesheet" href="command.css">
+    <title>命令管理工具 - Command Manager (Glass Morphism Edition)</title>
+    <link rel="stylesheet" href="command.css?v=20250827-glass">
 </head>
 <body>
     <!-- 主容器 -->
@@ -55,18 +61,22 @@
 
                 <!-- 快捷操作区域 -->
                 <div class="actions-section">
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-danger" id="resetBtn">
+                    <!-- 重置数据单独一行 -->
+                    <div class="action-buttons-row">
+                        <button class="btn btn-sm btn-danger btn-full" id="resetBtn">
                             <span>🔄</span>
                             <span>重置数据</span>
                         </button>
-                        <button class="btn btn-sm btn-info" id="exportBtn">
-                            <span>📤</span>
-                            <span>导出</span>
-                        </button>
-                        <button class="btn btn-sm btn-success" id="importBtn">
+                    </div>
+                    <!-- 导入导出一行 -->
+                    <div class="action-buttons-row action-buttons-duo">
+                        <button class="btn btn-sm btn-success btn-half" id="importBtn">
                             <span>📥</span>
                             <span>导入</span>
+                        </button>
+                        <button class="btn btn-sm btn-info btn-half" id="exportBtn">
+                            <span>📤</span>
+                            <span>导出</span>
                         </button>
                     </div>
                 </div>
@@ -201,6 +211,6 @@
         <input type="file" id="fileInput" accept=".json" style="display: none;">
     </div>
 
-    <script src="command.js"></script>
+    <script src="command.js?v=20250827-glass-fixed"></script>
 </body>
 </html>

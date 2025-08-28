@@ -31,7 +31,7 @@
 ### 本地部署
 ```bash
 # 克隆仓库
-git clone https://github.com/isabellakiko/command-manager
+git clone https://github.com/你的用户名/command-manager.git
 
 # 进入目录
 cd command-manager
@@ -113,8 +113,8 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 ## 👨‍💻 作者
 
 **陈澄 (Stephen Chan)**
-- GitHub: [@isabellakiko](https://github.com/isabellakiko/command-manager)
-- Email: kaylonchan@gmail.com
+- GitHub: [@你的GitHub用户名](https://github.com/你的GitHub用户名)
+- Email: your-email@example.com
 
 ---
 
